@@ -1,29 +1,15 @@
 package com.example;
 
-import com.example.services.Currency;
-
-import lombok.extern.java.Log;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
+import com.example.config.BotConfig;
+import com.example.config.BotInitializer;
 
 public class App {
     public static void main(String[] args) {
-        BaseRetrofit retrofit = BaseRetrofit.getInstance();
-        retrofit.getCurrencyService().getCurrency().enqueue(new Callback<String>() {
-            @Override
-            public final void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    System.out.println(response.body());
-                }
-            }
-
-            @Override
-            public final void onFailure(Call<String> call, Throwable t) {
-                System.out.println(t.getMessage());
-            }
-        });
+        try {
+            BotInitializer initializer = new BotInitializer(new TelegramBot(new BotConfig()));
+            initializer.init();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

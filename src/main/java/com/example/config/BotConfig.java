@@ -11,7 +11,7 @@ import lombok.Data;
 @PropertySource("application.properties")
 public class BotConfig {
     @Value("${bot.name}")
-    private String botName;
-    @Value("@{bot.token}")
-    private String token;
+    public String botName = "OfficialRateOfBYNBot";
+    @Value("${bot.token}")
+    public String token = "6600433696:AAGJ3ReHFYoVwrVNoLnKWeH_WssigGQah74";
 }
