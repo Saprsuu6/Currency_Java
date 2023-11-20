@@ -12,8 +12,6 @@ import lombok.Data;
 public class BotConfig {
     @Value("${bot.name}")
     private String botName;
-    @Value("${bot.name}")
-    private String botasdasd;
     @Value("@{bot.token}")
     private String token;
 }
