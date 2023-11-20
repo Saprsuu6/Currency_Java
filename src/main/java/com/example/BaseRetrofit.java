@@ -1,10 +1,7 @@
 package com.example;
 
-import java.lang.invoke.ClassSpecializer.Factory;
-
 import com.example.services.Currency;
 
-import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
@@ -23,7 +20,7 @@ public class BaseRetrofit {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
 
-        Currency service = retrofit.create(Currency.class);
+        currencyServise = retrofit.create(Currency.class);
     }
 
     public static BaseRetrofit getInstance() {
