@@ -53,30 +53,50 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         } else if (update.hasCallbackQuery()) {
             String querry = update.getCallbackQuery().getData();
+            long chatId = update.getUpdateId();
 
-            retrofit.getCurrencyService().getCurrency().enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        JSONArray object = new JSONArray(response.body());
-                        CurrencyModel currencyModel = null;
+            try {
+                Response<String> response = retrofit.getCurrencyService().getCurrency().execute();
+                if (response.isSuccessful() && response.body() != null) {
+                    JSONArray object = new JSONArray(response.body());
+                    CurrencyModel currencyModel = null;
 
-                        // if (querry == Constants.EURCallBack.getTitle()) {
-                        // currencyModel = new CurrencyModel(object.getJSONObject(0));
-                        // } else if (querry == Constants.USDCallBack.getTitle()) {
-                        // currencyModel = new CurrencyModel(object.getJSONObject(1));
-                        // }
-
-                        // if (currencyModel != null)
-                        // sendNewMessage(chatId, generateCurrencyAnswer(currencyModel));
+                    if (querry == Constants.EURCallBack.getTitle()) {
+                        currencyModel = new CurrencyModel(object.getJSONObject(0));
+                    } else if (querry == Constants.USDCallBack.getTitle()) {
+                        currencyModel = new CurrencyModel(object.getJSONObject(1));
                     }
-                }
 
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    System.out.println(t.getMessage());
+                    if (currencyModel != null)
+                        sendNewMessage(chatId, generateCurrencyAnswer(currencyModel));
                 }
-            });
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+            // retrofit.getCurrencyService().getCurrency().enqueue(new Callback<String>() {
+            // @Override
+            // public void onResponse(Call<String> call, Response<String> response) {
+            // if (response.isSuccessful() && response.body() != null) {
+            // JSONArray object = new JSONArray(response.body());
+            // CurrencyModel currencyModel = null;
+
+            // if (querry == Constants.EURCallBack.getTitle()) {
+            // currencyModel = new CurrencyModel(object.getJSONObject(0));
+            // } else if (querry == Constants.USDCallBack.getTitle()) {
+            // currencyModel = new CurrencyModel(object.getJSONObject(1));
+            // }
+
+            // if (currencyModel != null)
+            // sendNewMessage(chatId, generateCurrencyAnswer(currencyModel));
+            // }
+            // }
+
+            // @Override
+            // public void onFailure(Call<String> call, Throwable t) {
+            // System.out.println(t.getMessage());
+            // }
+            // });
         }
     }
 
