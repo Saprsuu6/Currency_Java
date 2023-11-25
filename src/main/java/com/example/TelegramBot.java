@@ -33,7 +33,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
+        if (update.hasMessage() && update.getMessage().hasText()) { // if typed message
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
@@ -53,11 +53,11 @@ public class TelegramBot extends TelegramLongPollingBot {
                     System.out.println("default");
                     break;
             }
-        } else if (update.hasCallbackQuery()) {
+        } else if (update.hasCallbackQuery()) { // if button pressed
             String querry = update.getCallbackQuery().getData();
             long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-            if (querry.equals(Constants.HomeText.getTitle())) {
+            if (querry.equals(Constants.HomeText.getTitle())) { // if has been pressed button "home"
                 try {
                     execute(new SendMessage(Long.toString(chatId), null,
                             MessageServise.start(update.getCallbackQuery().getMessage().getAuthorSignature()), null,
@@ -65,36 +65,38 @@ public class TelegramBot extends TelegramLongPollingBot {
                             null,
                             ButtonsServise.currency(), null,
                             null, null));
+
                 } catch (TelegramApiException e) {
                     System.out.println(e.getMessage());
                 }
             }
+            if (!querry.equals(Constants.HomeText.getTitle())) { // if has been pressed currency buttons
+                try {
+                    Response<String> response = retrofit.getCurrencyService().getCurrency().execute();
+                    if (response.isSuccessful() && response.body() != null) {
+                        JSONArray object = new JSONArray(response.body());
+                        CurrencyModel currencyModel = null;
 
-            try {
-                Response<String> response = retrofit.getCurrencyService().getCurrency().execute();
-                if (response.isSuccessful() && response.body() != null) {
-                    JSONArray object = new JSONArray(response.body());
-                    CurrencyModel currencyModel = null;
+                        if (querry.equals(Constants.EURCallBack.getTitle())) {
+                            currencyModel = new CurrencyModel(object.getJSONObject(0));
+                        } else if (querry.equals(Constants.USDCallBack.getTitle())) {
+                            currencyModel = new CurrencyModel(object.getJSONObject(1));
+                        }
 
-                    if (querry.equals(Constants.EURCallBack.getTitle())) {
-                        currencyModel = new CurrencyModel(object.getJSONObject(0));
-                    } else if (querry.equals(Constants.USDCallBack.getTitle())) {
-                        currencyModel = new CurrencyModel(object.getJSONObject(1));
-                    }
-
-                    if (currencyModel != null) {
-                        try {
-                            execute(new SendMessage(Long.toString(chatId), null,
-                                    MessageServise.currency(currencyModel), null, null, null, null,
-                                    ButtonsServise.home(), null,
-                                    null, null));
-                        } catch (TelegramApiException e) {
-                            System.out.println(e.getMessage());
+                        if (currencyModel != null) {
+                            try {
+                                execute(new SendMessage(Long.toString(chatId), null,
+                                        MessageServise.currency(currencyModel), null, null, null, null,
+                                        ButtonsServise.home(), null,
+                                        null, null));
+                            } catch (TelegramApiException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
                 }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
             }
         }
     }
