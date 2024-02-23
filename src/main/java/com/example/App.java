@@ -1,24 +1,17 @@
 package com.example;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.example.config.BotConfig;
-import com.example.config.BotInitializer;
+import org.json.JSONObject;
 
 public class App {
     public static void main(String[] args) {
-        try (AnnotationConfigApplicationContext appContext = new AnnotationConfigApplicationContext(BotConfig.class)) {
-            BotConfig botConfig = appContext.getBean("botConfigBean", BotConfig.class);
-
-            try {
-                BotInitializer initializer = new BotInitializer(new TelegramBot(botConfig));
-                initializer.init();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-
+        JSONObject config = new JSONObject("../../../resources/resources.json");
+        config.getString("asd");
+        // try {
+        // BotInitializer initializer = new BotInitializer(new TelegramBot(new
+        // BotConfig()));
+        // initializer.init();
+        // } catch (Exception e) {
+        // System.out.println(e.getMessage());
+        // }
     }
 }
